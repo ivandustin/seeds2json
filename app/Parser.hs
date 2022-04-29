@@ -55,12 +55,12 @@ range = do
     until <- number
     return (verse, until)
 
-verse = (range >>= (\value -> return (Left value))) ||| (number >>= (\value -> return (Right value)))
+verse = (do { value <- range; return (Left value) }) ||| (do { value <- number; return (Right value) })
 
 (|||) p q  = (try p) <|> (try q)
 toInt s    = read s :: Int
 seeds      = sepBy seed newline
-paragraphs = many1 (try (newline >> paragraph >>= (\paragraph -> newline >> return paragraph)))
+paragraphs = many1 (try (do { newline; paragraph <- paragraph; newline; return paragraph }))
 hash       = char '#'
 hashes     = count 6 hash
 book       = many1 letter
