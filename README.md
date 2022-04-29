@@ -10,8 +10,8 @@
 ```bash
 git clone https://github.com/ivandustin/seeds2json-haskell.git
 cd seeds2json-haskell
-cabal install
-````
+cabal install --overwrite-policy=always
+```
 
 ## Usage
 
