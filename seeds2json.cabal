@@ -29,7 +29,7 @@ executable seeds2json
     main-is:          Main.hs
 
     -- Modules included in this executable, other than Main.
-    -- other-modules:
+    other-modules:    Parser, Types
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
