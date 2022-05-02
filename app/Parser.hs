@@ -28,15 +28,15 @@ reference = do
     chapter <- chapter
     colon
     verse   <- verse
-    (verse, until, is_range) <- case verse of
-        Left (verse, until)  -> return (verse, until, True)
-        Right verse          -> return (verse, 0, False)
+    (verse, to, is_range) <- case verse of
+        Left (verse, to)  -> return (verse, to, True)
+        Right verse       -> return (verse, verse, False)
     newline
     return Types.Reference {
         Types.book     = book,
         Types.chapter  = chapter,
         Types.verse    = verse,
-        Types.until    = until,
+        Types.to       = to,
         Types.is_range = is_range
     }
 
@@ -52,8 +52,8 @@ number = do
 range = do
     verse <- number
     dash
-    until <- number
-    return (verse, until)
+    to    <- number
+    return (verse, to)
 
 verse = (do { value <- range; return (Left value) }) ||| (do { value <- number; return (Right value) })
 
