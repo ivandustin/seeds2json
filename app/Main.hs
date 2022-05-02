@@ -1,10 +1,9 @@
 module Main where
 
-import Data.Aeson.Encode.Pretty
-import Data.ByteString.Lazy
+import qualified Data.ByteString.Lazy as ByteString
 import System.Environment
 import System.Exit
-import Data.Aeson
+import Encode
 import Parser
 import Types
 
@@ -15,5 +14,5 @@ main = do
     ast   <- case value of
         Left  err -> die (show err)
         Right ast -> return ast
-    Data.ByteString.Lazy.writeFile "seeds.json" (encodePretty ast)
+    ByteString.writeFile "seeds.json" (encode ast)
     return ()
