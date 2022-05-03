@@ -8,8 +8,8 @@
 ## Install
 
 ```bash
-git clone https://github.com/ivandustin/seeds2json-haskell.git
-cd seeds2json-haskell
+git clone https://github.com/ivandustin/seeds2json.git
+cd seeds2json
 cabal install --overwrite-policy=always
 ```
 
