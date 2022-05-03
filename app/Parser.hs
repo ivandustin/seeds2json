@@ -1,7 +1,8 @@
 module Parser where
 
+import Data.List (intercalate)
+import Text.Parsec as Parsec
 import qualified Types
-import Text.Parsec
 
 parseFile filepath = do
     content <- readFile filepath
@@ -22,9 +23,9 @@ seed = do
 
 reference = do
     hashes
-    space
+    Parser.space
     book    <- book
-    space
+    Parser.space
     chapter <- chapter
     colon
     verse   <- verse
@@ -42,7 +43,8 @@ reference = do
 
 paragraph = do
     notFollowedBy hash
-    paragraph <- many1 (noneOf "\n")
+    words     <- Parser.words
+    paragraph <- return (intercalate " " words)
     return Types.Paragraph { Types.paragraph = paragraph }
 
 number = do
@@ -59,11 +61,15 @@ verse = (do { value <- range; return (Left value) }) ||| (do { value <- number; 
 
 (|||) p q  = (try p) <|> (try q)
 toInt s    = read s :: Int
-seeds      = sepBy seed newline
-paragraphs = many1 (try (do { newline; paragraph <- paragraph; newline; return paragraph }))
+space      = char ' '
 hash       = char '#'
+colon      = char ':'
+dash       = char '-'
+seeds      = sepBy seed newline
+character  = do { notFollowedBy Parsec.space; anyChar }
+word       = many1 character
+words      = sepBy1 word Parser.space
+paragraphs = many1 (try (do { newline; paragraph <- paragraph; newline; return paragraph }))
 hashes     = count 6 hash
 book       = many1 letter
 chapter    = number
-colon      = char ':'
-dash       = char '-'
