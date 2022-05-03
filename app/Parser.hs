@@ -21,13 +21,6 @@ seed = do
     paragraphs <- paragraphs
     return Types.Seed { Types.reference = reference, Types.paragraphs = paragraphs }
 
-header = do
-    hashes
-    Parser.space
-    lookAhead reference
-    reference <- manyTill anyChar newline
-    return reference
-
 paragraph = do
     notFollowedBy hash
     words     <- Parser.words
@@ -45,6 +38,7 @@ verse      = range ||| number
 seeds      = sepBy seed newline
 range      = number >> dash >> number
 reference  = book >> Parser.space >> chapter >> colon >> verse
+header     = hashes >> Parser.space >> lookAhead (reference >> newline) >> manyTill anyChar newline
 character  = notFollowedBy Parsec.space >> anyChar
 word       = many1 character
 words      = sepBy1 word Parser.space
