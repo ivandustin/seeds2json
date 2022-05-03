@@ -28,7 +28,6 @@ paragraph = do
     return Types.Paragraph { Types.paragraph = paragraph }
 
 (|||) p q  = (try p) <|> (try q)
-toInt s    = read s :: Int
 space      = char ' '
 hash       = char '#'
 colon      = char ':'
