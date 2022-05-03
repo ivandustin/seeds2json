@@ -17,29 +17,16 @@ parser = do
     return Types.AST { Types.seeds = seeds }
 
 seed = do
-    reference  <- reference
+    reference  <- header
     paragraphs <- paragraphs
     return Types.Seed { Types.reference = reference, Types.paragraphs = paragraphs }
 
-reference = do
+header = do
     hashes
     Parser.space
-    book    <- book
-    Parser.space
-    chapter <- chapter
-    colon
-    verse   <- verse
-    (verse, to, is_range) <- case verse of
-        Left (verse, to)  -> return (verse, to, True)
-        Right verse       -> return (verse, verse, False)
-    newline
-    return Types.Reference {
-        Types.book     = book,
-        Types.chapter  = chapter,
-        Types.verse    = verse,
-        Types.to       = to,
-        Types.is_range = is_range
-    }
+    lookAhead reference
+    reference <- manyTill anyChar newline
+    return reference
 
 paragraph = do
     notFollowedBy hash
@@ -47,29 +34,21 @@ paragraph = do
     paragraph <- return (intercalate " " words)
     return Types.Paragraph { Types.paragraph = paragraph }
 
-number = do
-    value <- many1 digit
-    return (toInt value)
-
-range = do
-    verse <- number
-    dash
-    to    <- number
-    return (verse, to)
-
-verse = (do { value <- range; return (Left value) }) ||| (do { value <- number; return (Right value) })
-
 (|||) p q  = (try p) <|> (try q)
 toInt s    = read s :: Int
 space      = char ' '
 hash       = char '#'
 colon      = char ':'
 dash       = char '-'
+number     = many1 digit
+verse      = range ||| number
 seeds      = sepBy seed newline
-character  = do { notFollowedBy Parsec.space; anyChar }
+range      = number >> dash >> number
+reference  = book >> Parser.space >> chapter >> colon >> verse
+character  = notFollowedBy Parsec.space >> anyChar
 word       = many1 character
 words      = sepBy1 word Parser.space
-paragraphs = many1 (try (do { newline; paragraph <- paragraph; newline; return paragraph }))
+paragraphs = many1 (try (between newline newline paragraph))
 hashes     = count 6 hash
 book       = many1 letter
 chapter    = number
