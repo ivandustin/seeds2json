@@ -1,5 +1,7 @@
 # seeds2json
 
+Convert [seeds](https://github.com/ivandustin/seeds) from Markdown to JSON format.
+
 ## Requirements
 
 - [Haskell](https://www.haskell.org/ghcup/)
