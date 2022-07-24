@@ -24,4 +24,4 @@ git clone https://github.com/ivandustin/seeds.git
 seeds2json seeds/README.md
 ```
 
-The result will be written in `seeds.json` in the current working directory.
+The output will be written to `seeds.json` file in the current working directory.
